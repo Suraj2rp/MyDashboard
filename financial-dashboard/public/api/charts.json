@@ -1,0 +1,18 @@
+{
+  "clients": [
+    { "name": "Active", "value": 300 },
+    { "name": "New", "value": 150 },
+    { "name": "Online", "value": 100 },
+    { "name": "Inactive", "value": 50 }
+  ],
+  "sipBusiness": [
+    { "month": "Jan", "sip": 40, "growth": 24 },
+    { "month": "Feb", "sip": 30, "growth": 13 },
+    { "month": "Mar", "sip": 20, "growth": 98 }
+  ],
+  "monthlyMIS": [
+    { "month": "Jan", "aum": 400, "sip": 240, "clients": 2400 },
+    { "month": "Feb", "aum": 300, "sip": 139, "clients": 2210 },
+    { "month": "Mar", "aum": 200, "sip": 980, "clients": 2290 }
+  ]
+}
