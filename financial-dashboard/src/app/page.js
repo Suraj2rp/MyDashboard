@@ -2,28 +2,41 @@
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import StatCard from "./components/StatCard";
-import ChartClients from "./components/ChartClients";
+import ChartClients from "./components/ChartClient";
 import ChartSIP from "./components/ChartSIP";
 import ChartMonthlyMIS from "./components/ChartMonthlyMIS";
+import FilterBar from "./components/FilterBar";
+import { downloadPDF } from "./utils/downloadPDF";
+
 
 export default function Dashboard() {
   const [aum, setAum] = useState(null);
   const [sip, setSip] = useState(null);
   const [stats, setStats] = useState(null);
+  const [filter, setFilter] = useState("stats");
 
   useEffect(() => {
     fetch("/api/aum.json").then(res => res.json()).then(setAum);
     fetch("/api/sip.json").then(res => res.json()).then(setSip);
-    fetch("/api/stats.json").then(res => res.json()).then(setStats);
-  }, []);
+
+    // Fetch stats depending on filter
+    fetch(`/api/${filter}.json`).then((res) => res.json()).then(setStats);
+  }, [filter]);
 
   return (
     <div>
       <Navbar />
+      <div id="dashboard" className="p-6 space-y-6">
+        
+        {/* Download PDF button */}
+        <button onClick={() => downloadPDF()}
+          className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg">
+          Download PDF
+        </button>
 
-      <div className="p-6 space-y-6">
+
         {/* Main AUM + SIP Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div  className="pdf-section grid grid-cols-1 md:grid-cols-2 gap-6" data-title="AUM / SIP">
           <div className="p-4 bg-white shadow rounded-lg">
             <h2 className="text-lg font-semibold">AUM</h2>
             {aum ? (
@@ -45,7 +58,11 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Filter */}
+        <FilterBar onFilter={(f) => setFilter(`stats-${f}`)} />
+
         {/* Stats Cards */}
+        <div className="pdf-section space-y-6" data-title="Stats Overview">
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <StatCard title="Purchases" value={stats.purchases} />
@@ -55,13 +72,20 @@ export default function Dashboard() {
             <StatCard title="New SIP" value={stats.newSip} />
           </div>
         )}
+        </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ChartClients />
-          <ChartSIP />
+        <div className="pdf-section grid grid-cols-1 md:grid-cols-2 gap-6" data-title="Charts">
+          <div className="pdf-chart" data-title="Client Distribution Chart">
+            <ChartClients />
+          </div>
+          <div className="pdf-chart" data-title="SIP Trend Chart">
+            <ChartSIP />
+          </div>
         </div>
-        <ChartMonthlyMIS />
+        <div className="pdf-chart" data-title="Monthly MIS Chart">
+          <ChartMonthlyMIS />
+        </div>
       </div>
     </div>
   );
